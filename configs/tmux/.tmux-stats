@@ -1,5 +1,6 @@
 #!/bin/bash
 iface=$(route get default 2>/dev/null | awk '/interface:/{print $2}')
 ip=$(ifconfig "$iface" 2>/dev/null | awk '/inet /{print $2}')
-disk=$(df -h / | awk 'NR==2{print $5}')
-[ -n "$ip" ] && printf '󰛳 %s 󰋊 %s' "$ip" "$disk" || printf '󰋊 %s' "$disk"
+free=$(memory_pressure 2>/dev/null | awk -F': ' '/free percentage/{print $2}' | tr -d '%')
+[ -n "$free" ] && used=$((100 - free)) && ram="${used}%" || ram="?"
+[ -n "$ip" ] && printf '󰛳 %s 󰍛 %s' "$ip" "$ram" || printf '󰍛 %s' "$ram"
