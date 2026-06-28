@@ -27,3 +27,6 @@ confirm-close-surface = false
 
 # Required for animated shaders.
 custom-shader-animation = false
+
+# Shift+Enter for opencode newline
+keybind = shift+enter=send:\x1b[13;2u
