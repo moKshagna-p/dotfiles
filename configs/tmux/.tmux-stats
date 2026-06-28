@@ -1,6 +1,5 @@
 #!/bin/bash
 iface=$(route get default 2>/dev/null | awk '/interface:/{print $2}')
 ip=$(ifconfig "$iface" 2>/dev/null | awk '/inet /{print $2}')
-free=$(memory_pressure 2>/dev/null | awk -F': ' '/free percentage/{print $2}' | tr -d '%')
-[ -n "$free" ] && used=$((100 - free)) && ram="${used}%" || ram="?"
-[ -n "$ip" ] && printf '󰛳 %s 󰍛 %s' "$ip" "$ram" || printf '󰍛 %s' "$ram"
+load=$(sysctl -n vm.loadavg 2>/dev/null | awk '{print $2, $3, $4}')
+[ -n "$ip" ] && printf '󰛳 %s 󰓅 %s' "$ip" "$load" || printf '󰓅 %s' "$load"
