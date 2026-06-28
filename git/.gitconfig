@@ -1,0 +1,8 @@
+[credential]
+	helper = osxkeychain
+[user]
+	name = moKshagna-p
+	mail = mokshagnareddy45@gmail.com
+	email = mokshagnareddy45@gmail.com
+[alias]
+	sync = !git checkout main && git pull upstream main && git push origin main
