@@ -1,0 +1,29 @@
+background-opacity = 0.60
+background-blur = 40
+theme = Atom
+cursor-style = bar
+macos-icon = xray
+macos-icon-ghost-color = #0B1D85
+confirm-close-surface = false
+
+# Load the aurora shader after Ghostty renders the terminal.
+
+
+# custom-shader = /Users/mokshagna/Desktop/configs/aurora-ghostty.glsl
+
+# custom-shader = /Users/mokshagna/Desktop/configs/aurora-lite-ghostty.glsl
+
+# custom-shader = /Users/mokshagna/Desktop/configs/aurora-ultralite-ghostty.glsl
+# custom-shader = /Users/mokshagna/Desktop/configs/starfield-smooth-ghostty.glsl
+
+# custom-shader = /Users/mokshagna/Desktop/configs/gargantua-ghostty.glsl
+# custom-shader = /Users/mokshagna/Desktop/configs/star-nest-ghostty.glsl
+# custom-shader = /Users/mokshagna/Desktop/configs/pink-warp-ghostty.glsl
+# custom-shader = /Users/mokshagna/Desktop/configs/starfield-colors.glsl
+# custom-shader = /Users/mokshagna/Desktop/configs/ghostty-shaders/retro-terminal.glsl
+# custom-shader = /Users/mokshagna/Desktop/configs/ghostty-shaders/underwater.glsl
+# custom-shader = /Users/mokshagna/Desktop/configs/ghostty-shaders/tft.glsl
+
+
+# Required for animated shaders.
+custom-shader-animation = false
