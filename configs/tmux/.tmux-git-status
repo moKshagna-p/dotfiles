@@ -1,0 +1,8 @@
+#!/bin/bash
+dir=$(tmux display-message -p '#{pane_current_path}' 2>/dev/null)
+[ -z "$dir" ] && exit
+cd "$dir" 2>/dev/null || exit
+branch=$(git branch --show-current 2>/dev/null)
+[ -z "$branch" ] && exit
+dirty=$(git status --porcelain 2>/dev/null)
+[ -n "$dirty" ] && printf '  %s±' "$branch" || printf '  %s' "$branch"

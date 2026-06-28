@@ -6,24 +6,23 @@ Personal macOS configuration files organized by tool.
 
 | Directory | Tool | Config File(s) |
 |-----------|------|----------------|
-| `tmux/` | tmux | `.tmux.conf`, `.tmux-nowplaying` |
-| `nvim/` | Neovim | LazyVim config |
-| `zsh/` | Zsh + Oh My Zsh | `.zshrc`, `.zshenv`, custom themes/plugins |
-| `ghostty/` | Ghostty | `config` |
-| `karabiner/` | Karabiner-Elements | `karabiner.json` |
-| `aerospace/` | Aerospace | `aerospace.toml` |
-| `git/` | Git | `.gitconfig` |
-| `starship/` | Starship | `starship.toml` |
-| `kitty/` | Kitty | `kitty.conf` |
-| `zed/` | Zed | `settings.json` |
-| `bun/` | Bun/npm | `.npmrc` |
-| `misc/` | Misc | `.bash_profile`, Raycast config |
+| `configs/tmux/` | tmux | `.tmux.conf`, `.tmux-nowplaying` |
+| `configs/nvim/` | Neovim | LazyVim config |
+| `configs/zsh/` | Zsh + Oh My Zsh | `.zshrc`, `.zshenv`, custom themes/plugins |
+| `configs/ghostty/` | Ghostty | `config` |
+| `configs/karabiner/` | Karabiner-Elements | `karabiner.json` |
+| `configs/aerospace/` | Aerospace | `aerospace.toml` |
+| `configs/git/` | Git | `.gitconfig` |
+| `configs/starship/` | Starship | `starship.toml` |
+| `configs/kitty/` | Kitty | `kitty.conf` |
+| `configs/zed/` | Zed | `settings.json` |
+| `configs/misc/` | Misc | `.bash_profile`, Raycast config |
 
 ## Usage
 
-Symlink files to their expected locations:
+Make changes inside `configs/` and copy files to their actual locations, or symlink:
 
 ```sh
-ln -sf ~/dotfiles/tmux/.tmux.conf ~/.tmux.conf
-ln -sf ~/dotfiles/nvim ~/.config/nvim
+ln -sf ~/dotfiles/configs/tmux/.tmux.conf ~/.tmux.conf
+ln -sf ~/dotfiles/configs/nvim ~/.config/nvim
 ```
