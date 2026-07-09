@@ -1,0 +1,4 @@
+#!/bin/bash
+# ponytail: powermetrics needs root; relies on NOPASSWD sudoers entry below
+t=$(sudo -n powermetrics --samplers smc -n 1 -i 1 2>/dev/null | awk -F': ' '/CPU die temperature:/{print $2; exit}')
+[ -n "$t" ] && printf '󰽃 %s' "$t"
