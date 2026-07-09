@@ -79,6 +79,9 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git zsh-syntax-highlighting zsh-autosuggestions z sudo web-search copypath)
 
+# Custom completions directory
+fpath=("$HOME/.zsh/completions" $fpath)
+
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
@@ -109,6 +112,38 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+# ---- Completion settings ----
+# Case-insensitive, partial-word, and substring completion
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
+# Menu selection (use tab to navigate)
+zstyle ':completion:*' menu select
+# Group results by type
+zstyle ':completion:*' group-name ''
+# Show descriptions
+zstyle ':completion:*:descriptions' format '%F{green}%d%f'
+# Separate listings
+zstyle ':completion:*' list-dirs-first true
+# Don't complete uninteresting users
+zstyle ':completion:*:*:*:users' ignored-patterns \
+  adm amanda apache at avahi avahi-autoipd beaglidx bin cacti canna \
+  clamav daemon dbus distcache dnsmasq dovecot fax ftp games gdm \
+  gkrellmd gopher hacluster haldaemon halt hsqldb ident junkbust kdm \
+  ldap lp mail mailman mailnull man messagebus mldonkey nobody nscd \
+  ntp nx openvpn operator pcap polkitd postfix postgres privoxy pulse \
+  pvm quagga radvd rpc rpcuser rpm shutdown squid sshd sync uucp \
+  vcsa xfs '_*'
+# Cache completions
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path "$HOME/.zsh/zcompcache"
+
+# ---- Tool completions ----
+# gcloud: source its bash-completion wrapper
+[[ -f "/opt/homebrew/share/google-cloud-sdk/completion.zsh.inc" ]] && source "/opt/homebrew/share/google-cloud-sdk/completion.zsh.inc"
+
+# aws: use bashcompinit with aws_completer
+autoload -Uz bashcompinit && bashcompinit
+[[ -x /usr/local/bin/aws_completer ]] && complete -C /usr/local/bin/aws_completer aws
+
 alias ls="eza --icons"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
@@ -153,3 +188,6 @@ tmux() {
     command tmux "$@"
   fi
 }
+
+# `cd` with no args goes to Desktop
+cd() { builtin cd "${1:-$HOME/Desktop}" }

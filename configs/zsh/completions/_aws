@@ -1,0 +1,23 @@
+#compdef aws
+
+# AWS CLI v2 completion via aws_completer
+__aws_completion() {
+  local words
+  setopt localoptions noshwordsplit noksharrays
+  words=("${words[@]}")
+  if [[ "${#words}" -le 1 ]]; then
+    return
+  fi
+  local si="$IFS"
+  IFS=$'\n'
+  COMPREPLY=($(COMP_LINE="${words[*]}" COMP_POINT="${#words[*]}" COMP_WORDS=("${words[@]}") _ARGCOMPLETE=1 /usr/local/bin/aws_completer 2>/dev/null))
+  IFS="$si"
+  _describe 'aws' COMPREPLY
+}
+
+_aws() {
+  local ret=1
+  _call_function ret __aws_completion
+  return ret
+}
+_aws "$@"

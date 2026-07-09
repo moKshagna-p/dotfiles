@@ -1,0 +1,31 @@
+#compdef terraform
+_terraform() {
+  local curcontext="$curcontext" state line
+  typeset -A opt_args
+
+  if ! type _bash_complete-word &>/dev/null; then
+    bashcompinit
+  fi
+
+  _arguments '1: :->command' '*: :->args'
+  case $state in
+    command)
+      local -a commands
+      commands=(
+        'init:Initialize a Terraform working directory'
+        'validate:Check whether the configuration is valid'
+        'plan:Show changes required by the current configuration'
+        'apply:Create or update infrastructure'
+        'destroy:Destroy previously-created infrastructure'
+        'fmt:Reformat your configuration'
+        'version:Show the current Terraform version'
+        'test:Execute integration tests'
+      )
+      _describe 'command' commands
+      ;;
+    args)
+      compadd $(terraform -help "$words[2]" 2>/dev/null | sed -n 's/^  \(-[a-zA-Z-]*\)/\1/p' | tr '\n' ' ')
+      ;;
+  esac
+}
+_terraform "$@"
