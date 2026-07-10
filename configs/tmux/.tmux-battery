@@ -1,0 +1,10 @@
+#!/bin/bash
+# ponytail: pmset is macOS-only
+out=$(pmset -g batt 2>/dev/null | grep -o '[0-9]*%\|charging\|discharging\|AC Power' | head -1)
+pct=$(pmset -g batt 2>/dev/null | grep -o '[0-9]*%' | tr -d '%')
+[ -z "$pct" ] && exit
+if pmset -g batt 2>/dev/null | grep -q 'AC Power'; then
+  printf '󰂄 %s%%' "$pct"
+else
+  printf '󰁺 %s%%' "$pct"
+fi
