@@ -11,10 +11,10 @@ tell application "Spotify"
 end tell
 ' 2>/dev/null)
 if [ -n "$res" ]; then
-  echo "$res"
+  printf '#[fg=#bb9af7]%s ' "$res"
   exit 0
 fi
-osascript -e '
+res=$(osascript -e '
 tell application "Music"
   if running then
     try
@@ -24,4 +24,5 @@ tell application "Music"
     end try
   end if
 end tell
-' 2>/dev/null
+' 2>/dev/null)
+[ -n "$res" ] && printf '#[fg=#bb9af7]%s ' "$res"

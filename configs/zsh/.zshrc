@@ -177,7 +177,7 @@ alias music="open -a Music"
 alias settings="open -a 'System Settings'"
 alias whatsapp="open -a WhatsApp"
 alias zed="open -a Zed"
-alias code="open -a 'Visual Studio Code'"
+alias code="/Applications/Zed.app/Contents/MacOS/cli"
 alias store="open -a 'App Store'"
 alias lyrics="python3 /Users/mokshagna/Desktop/dev/projects/lrc/lyrics.py"
 

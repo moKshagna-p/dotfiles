@@ -1,10 +1,19 @@
 #!/bin/bash
 # ponytail: pmset is macOS-only
-out=$(pmset -g batt 2>/dev/null | grep -o '[0-9]*%\|charging\|discharging\|AC Power' | head -1)
 pct=$(pmset -g batt 2>/dev/null | grep -o '[0-9]*%' | tr -d '%')
 [ -z "$pct" ] && exit
-if pmset -g batt 2>/dev/null | grep -q 'AC Power'; then
-  printf '󰂄 %s%%' "$pct"
+
+if [ "$pct" -le 30 ] 2>/dev/null && ! pmset -g batt 2>/dev/null | grep -q 'AC Power'; then
+  if [ ! -f /tmp/tmux-battery-low-notified ]; then
+    osascript -e "display notification \"Battery at ${pct}%\" with title \"Low Battery\"" 2>/dev/null
+    touch /tmp/tmux-battery-low-notified
+  fi
 else
-  printf '󰁺 %s%%' "$pct"
+  rm -f /tmp/tmux-battery-low-notified 2>/dev/null
+fi
+
+if pmset -g batt 2>/dev/null | grep -q 'AC Power'; then
+  printf '#[fg=#e0af68]󰂄 %s%% ' "$pct"
+else
+  printf '#[fg=#e0af68]󰁺 %s%% ' "$pct"
 fi
