@@ -1,0 +1,93 @@
+# Paneru - SUPER SIMPLE config (auto-reloads on save)
+# File: ~/.config/paneru/paneru.toml
+
+[options]
+focus_follows_mouse = true
+mouse_follows_focus = true
+preset_column_widths = [0.33, 0.5, 0.66, 1.0]
+animation_speed = 16.0
+sliver_width = 5
+sliver_height = 1.0
+window_resize_cycle = true
+auto_center = false
+virtual_workspace_animations = false
+
+[padding]
+top = 4
+bottom = 4
+left = 4
+right = 4
+
+[swipe]
+sensitivity = 0.50
+deceleration = 2.2
+continuous = true
+
+[swipe.scroll]
+modifier = "alt"
+vertical_modifier = "shift"
+
+[decorations]
+workspace_menu_status = true
+workspace_popup_status = true
+
+[bindings]
+# --- SUPER SIMPLE: just ALT + one key ---
+# no ctrl, no combo - easy to remember
+
+# 1. Move focus (the strip)
+window_focus_west = "alt - h"   # left
+window_focus_east = "alt - l"   # right
+window_focus_north = "alt - k"  # up
+window_focus_south = "alt - j"  # down
+window_focus_first = "alt - leftarrow"
+window_focus_last = "alt - rightarrow"
+
+# 2. Move window itself (add SHIFT)
+window_swap_west = "alt + shift - h"
+window_swap_east = "alt + shift - l"
+
+# 3. Size & layout
+window_resize = "alt - r"         # grow
+window_shrink = "alt + shift - r" # shrink
+window_center = "alt - c"
+window_balance = "alt - b"
+window_fullwidth = "alt - f"
+window_snap = "alt - s"
+
+# 4. Stack
+window_stack = "alt - t"
+window_unstack = "alt + shift - t"
+window_equalize = "alt - e"
+
+# 5. Floating
+window_manage = "alt - m"
+
+# 6. Displays
+window_nextdisplay = "alt - n"
+window_nextdisplaysend = "alt + shift - n"
+mouse_nextdisplay = "alt - y"
+
+# 7. Virtual workspaces
+window_virtual_north = "alt - uparrow"
+window_virtual_south = "alt - downarrow"
+window_virtualnum_1 = "alt - 1"
+window_virtualnum_2 = "alt - 2"
+window_virtualnum_3 = "alt - 3"
+
+# 8. System (keep ctrl to avoid accidental quit)
+quit = "ctrl + alt - q"
+restart = "ctrl + alt + shift - q"
+
+# 9. Window rules - force Apple Music to tile on the roll
+[windows.apple_music_main]
+title = ".*"
+bundle_id = "com.apple.Music"
+manage = true
+floating = false
+width = 0.85
+
+[windows.apple_music_mini]
+title = "MiniPlayer.*"
+bundle_id = "com.apple.Music"
+floating = true
