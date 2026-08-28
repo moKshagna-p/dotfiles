@@ -40,8 +40,8 @@ window_focus_west = "alt - h"   # left
 window_focus_east = "alt - l"   # right
 window_focus_north = "alt - k"  # up
 window_focus_south = "alt - j"  # down
-window_focus_first = "alt - leftarrow"
-window_focus_last = "alt - rightarrow"
+window_focus_first = "ctrl + alt - leftarrow"
+window_focus_last = "ctrl + alt - rightarrow"
 
 # 2. Move window itself (add SHIFT)
 window_swap_west = "alt + shift - h"
@@ -69,8 +69,8 @@ window_nextdisplaysend = "alt + shift - n"
 mouse_nextdisplay = "alt - y"
 
 # 7. Virtual workspaces
-window_virtual_north = "alt - uparrow"
-window_virtual_south = "alt - downarrow"
+window_virtual_north = "ctrl + alt - uparrow"
+window_virtual_south = "ctrl + alt - downarrow"
 window_virtualnum_1 = "alt - 1"
 window_virtualnum_2 = "alt - 2"
 window_virtualnum_3 = "alt - 3"
