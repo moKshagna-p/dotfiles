@@ -12,6 +12,7 @@ Personal macOS configuration files organized by tool.
 | `configs/ghostty/` | Ghostty | `config` |
 | `configs/karabiner/` | Karabiner-Elements | `karabiner.json` |
 | `configs/aerospace/` | Aerospace | `aerospace.toml` |
+| `configs/paneru/` | Paneru | `paneru.toml` (sliding tiling WM - alt bindings, 60Hz smooth, alt+scroll) |
 | `configs/git/` | Git | `.gitconfig` |
 | `configs/starship/` | Starship | `starship.toml` |
 | `configs/kitty/` | Kitty | `kitty.conf` |
@@ -25,4 +26,5 @@ Make changes inside `configs/` and copy files to their actual locations, or syml
 ```sh
 ln -sf ~/dotfiles/configs/tmux/.tmux.conf ~/.tmux.conf
 ln -sf ~/dotfiles/configs/nvim ~/.config/nvim
+ln -sf ~/dotfiles/configs/paneru/paneru.toml ~/.config/paneru/paneru.toml
 ```
