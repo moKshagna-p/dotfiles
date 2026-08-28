@@ -5,8 +5,8 @@
 focus_follows_mouse = true
 mouse_follows_focus = true
 preset_column_widths = [0.33, 0.5, 0.66, 1.0]
-animation_speed = 16.0
-sliver_width = 5
+animation_speed = 20.0
+sliver_width = 4
 sliver_height = 1.0
 window_resize_cycle = true
 auto_center = false
@@ -19,8 +19,8 @@ left = 4
 right = 4
 
 [swipe]
-sensitivity = 0.50
-deceleration = 2.2
+sensitivity = 0.55
+deceleration = 1.6
 continuous = true
 
 [swipe.scroll]
