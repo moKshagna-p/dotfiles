@@ -13,10 +13,10 @@ auto_center = false
 virtual_workspace_animations = false
 
 [padding]
-top = 4
-bottom = 4
-left = 4
-right = 4
+top = 6
+bottom = 6
+left = 6
+right = 6
 
 [swipe]
 sensitivity = 0.55
@@ -91,3 +91,9 @@ width = 0.85
 title = "MiniPlayer.*"
 bundle_id = "com.apple.Music"
 floating = true
+
+# Tiny gap between all tiled windows (6px)
+[windows.gap]
+title = ".*"
+horizontal_padding = 6
+vertical_padding = 6
