@@ -1,0 +1,14 @@
+;;; init-local.el --- Personal overrides -*- lexical-binding: t; -*-
+;;; Commentary: Copy to init-local.el and customize
+
+;;; Code:
+;; Example: set font
+;; (set-face-attribute 'default nil :family "JetBrains Mono" :height 140)
+
+;; Example: extra keybindings
+;; (with-eval-after-load 'general
+;;   (leader "c" '(:ignore t :which-key "code")
+;;           "ca" '(eglot-code-actions :which-key "actions")))
+
+(provide 'init-local)
+;;; init-local.el ends here

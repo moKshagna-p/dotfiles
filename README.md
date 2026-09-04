@@ -17,6 +17,7 @@ Personal macOS configuration files organized by tool.
 | `configs/starship/` | Starship | `starship.toml` |
 | `configs/kitty/` | Kitty | `kitty.conf` |
 | `configs/zed/` | Zed | `settings.json` |
+| `configs/emacs/` | Emacs | `early-init.el`, `init.el` (lean Purcell + Evil + vertico/corfu) |
 | `configs/misc/` | Misc | `.bash_profile`, Raycast config |
 
 ## Usage
@@ -26,5 +27,6 @@ Make changes inside `configs/` and copy files to their actual locations, or syml
 ```sh
 ln -sf ~/dotfiles/configs/tmux/.tmux.conf ~/.tmux.conf
 ln -sf ~/dotfiles/configs/nvim ~/.config/nvim
+ln -sf ~/dotfiles/configs/emacs ~/.config/emacs
 ln -sf ~/dotfiles/configs/paneru/paneru.toml ~/.config/paneru/paneru.toml
 ```
