@@ -79,7 +79,18 @@ window_virtualnum_3 = "alt - 3"
 quit = "ctrl + alt - q"
 restart = "ctrl + alt + shift - q"
 
-# 9. Window rules - force Apple Music to tile on the roll
+# 9. Window rules - tile every app by default, including non-standard windows
+[windows.force_all_apps]
+title = ".*"
+manage = true
+
+# Paneru requires a bundle-specific rule to force-manage an unobservable process.
+[windows.chatgpt]
+title = ".*"
+bundle_id = "com.openai.codex"
+manage = true
+floating = false
+
 [windows.apple_music_main]
 title = ".*"
 bundle_id = "com.apple.Music"
