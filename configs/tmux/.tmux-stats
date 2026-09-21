@@ -3,4 +3,5 @@ iface=$(route get default 2>/dev/null | awk '/interface:/{print $2}')
 ip=$(ifconfig "$iface" 2>/dev/null | awk '/inet /{print $2}')
 free=$(memory_pressure 2>/dev/null | awk -F': ' '/free percentage/{print $2}' | tr -d '%')
 [ -n "$free" ] && used=$((100 - free)) && ram="${used}%" || ram="?"
-[ -n "$ip" ] && printf '#[fg=#ff9e64]󰛳 %s 󰍛 %s ' "$ip" "$ram" || printf '#[fg=#ff9e64]󰍛 %s ' "$ram"
+if [ -n "$ip" ]; then body="󰛳 $ip 󰍛 $ram"; else body="󰍛 $ram"; fi
+printf '#[fg=#292e42,bg=#1a1b26]#[bg=#292e42] #[fg=#ff9e64]%s #[fg=#292e42,bg=#1a1b26] ' "$body"

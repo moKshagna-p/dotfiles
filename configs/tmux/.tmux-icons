@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# .tmux-icons — generate window-status formats with a per-CLI nerd-font icon.
+#
+# Called from ~/.tmux.conf via `run-shell` on every reload, so editing this
+# table and reloading (prefix + r) is enough to change the icons.
+#
+# Table format:  "<anchored regex><TAB><glyph>"   (first match wins)
+#   matched against tmux's #{pane_current_command} of the window's active pane.
+# Colors mirror the palette in ~/.tmux.conf.
+
+set -euo pipefail
+command -v tmux >/dev/null || exit 0
+
+default='󰈔'
+apps=(
+  "nvim|vim|vi|hx	"
+  "opencode.*	󰚩"
+  "claude.*	󰧹"
+  "codex.*	󰙴"
+  "lazygit|tig|git	"
+  "node|bun|deno|npm|pnpm|yarn|vite	"
+  "python[0-9.]*|ipython	"
+  "docker|podman	"
+  "kubectl|k9s|helm|minikube	󱃽"
+  "cargo|rustc	"
+  "go|gopls|dlv	"
+  "ruby|irb|rails|bundle	"
+  "emacs|emacsclient	"
+  "btop|htop|top|glances	󰹚"
+  "fzf|sk	󰍉"
+  "ssh|mosh|tailscale|tsh	󰣀"
+  "zsh|bash|fish|sh|nu|pwsh|dash	󰁭"
+)
+
+# Build the icon expression from the inside out so the first row wins.
+expr=""
+i=$(( ${#apps[@]} - 1 ))
+while [ "$i" -ge 0 ]; do
+  entry="${apps[$i]}"
+  pat="${entry%%$'\t'*}"
+  icon="${entry##*$'\t'}"
+  cond="#{?#{m/r:^(${pat})\$,#{pane_current_command}},${icon}"
+  if [ -z "$expr" ]; then expr="${cond},${default}}"; else expr="${cond},${expr}}"; fi
+  i=$(( i - 1 ))
+done
+
+inactive="#[fg=#565f89] #I ${expr} #W#{?window_activity_flag,#[fg=#e0af68]󰂞 ,}#{?window_bell_flag,#[fg=#f7768e]󰂠 ,}#[fg=#565f89] "
+active="#[fg=#7aa2f7,bg=#1a1b26] #[fg=#1a1b26,bg=#7aa2f7] #I ${expr} #W#{?window_zoomed_flag, 󰊓 ,} #[fg=#7aa2f7,bg=#1a1b26] #[fg=#a9b1d6,bg=#1a1b26]"
+
+tmux set -g window-status-format "${inactive}"
+tmux set -g window-status-current-format "${active}"
