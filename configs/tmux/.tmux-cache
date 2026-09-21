@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# .tmux-cache — throttle a command's output to once per TTL.
+#
+# tmux re-runs every #(...) in the status line on each status-interval tick.
+# At interval 1 that means the heavy modules (powermetrics, pmset, osascript,
+# memory_pressure) would fork once per second. This wrapper runs the command at
+# most once per <ttl> seconds and replays the last output in between.
+#
+# usage: .tmux-cache <ttl-seconds> <key> <command> [args...]
+#   .tmux-cache 10 cputemp ~/.tmux-cputemp
+#   .tmux-cache 5  nowplaying ~/.tmux-nowplaying
+#
+# Kept to bash-builtins on the warm path (no stat/cat) to stay cheap; the only
+# fork per tick is `date`, since macOS ships bash 3.2 without printf %(%s)T.
+
+dir="${TMPDIR:-/tmp}/tmux-cache.${USER:-$(id -u)}"
+[ -d "$dir" ] || mkdir -p "$dir" 2>/dev/null || dir="${TMPDIR:-/tmp}"
+
+ttl=$1
+key=$2
+shift 2
+out="$dir/$key"
+ts="$dir/$key.ts"
+
+now=$(date +%s)
+last=""
+[ -f "$ts" ] && read -r last < "$ts" 2>/dev/null
+
+if [ -z "$last" ] || [ $((now - last)) -ge "$ttl" ]; then
+  # Cache the output even when the command exits non-zero: modules like
+  # .tmux-nowplaying and .tmux-cputemp print nothing (and return 1) when idle,
+  # and we still want to remember that "nothing" for the full TTL.
+  tmp="$out.$$"
+  "$@" > "$tmp" 2>/dev/null
+  mv -f "$tmp" "$out"
+  printf '%s\n' "$now" > "$ts"
+fi
+
+[ -f "$out" ] && printf '%s' "$(<"$out")"
