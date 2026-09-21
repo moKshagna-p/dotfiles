@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+# Dominant, bar-friendly color from album artwork.
+# Input : a file that is either raw image bytes, or osascript's «data TYPEHEX» text.
+# Output: "<bg-hex> <text-hex>" — bg for the chip, text chosen for contrast.
+import sys, re, io, colorsys
+
+if len(sys.argv) < 2:
+    sys.exit(1)
+data = open(sys.argv[1], "rb").read()
+
+from PIL import Image
+img = None
+try:
+    img = Image.open(io.BytesIO(data)); img.load()
+except Exception:
+    try:
+        text = data.decode("utf-8", "replace")
+        m = re.search(r"data\s+[0-9A-Za-z]{4}([0-9A-Fa-f]{16,})", text)
+        if m:
+            img = Image.open(io.BytesIO(bytes.fromhex(m.group(1)))); img.load()
+    except Exception:
+        img = None
+if img is None:
+    sys.exit(1)
+
+im = img.convert("RGB").resize((64, 64))
+q = im.quantize(colors=8, method=Image.MEDIANCUT)
+pal = q.getpalette()
+
+# Prefer the most common reasonably-saturated, mid-lightness color.
+best = None
+for cnt, idx in sorted(q.getcolors(), reverse=True):
+    r, g, b = pal[idx * 3: idx * 3 + 3]
+    mx, mn = max(r, g, b), min(r, g, b)
+    sat = 0 if mx == 0 else (mx - mn) / mx
+    light = (mx + mn) / 2 / 255
+    if sat >= 0.20 and 0.15 <= light <= 0.90:
+        best = (r, g, b); break
+if best is None:
+    cnt, idx = sorted(q.getcolors(), reverse=True)[0]
+    best = tuple(pal[idx * 3: idx * 3 + 3])
+
+# Clamp so the chip stays legible on the dark bar.
+h, l, s = colorsys.rgb_to_hls(best[0] / 255, best[1] / 255, best[2] / 255)
+s = min(max(s, 0.40), 0.95)
+l = min(max(l, 0.34), 0.66)
+r, g, b = colorsys.hls_to_rgb(h, l, s)
+r, g, b = int(r * 255), int(g * 255), int(b * 255)
+
+lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255
+fg = "#1a1b26" if lum > 0.58 else "#f5f5f7"
+print("#%02x%02x%02x %s" % (r, g, b, fg))

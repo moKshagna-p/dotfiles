@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+# .tmux-agent — AI-agent sentinel for the tmux bar.
+#
+# When an AI CLI (opencode/claude/codex) runs in the active pane, show a pill
+# with the agent name and elapsed time. The colour is the status: purple while
+# the agent is working, amber once it has gone quiet (likely waiting for you).
+#
+# usage: .tmux-agent <pane-pid>       (called with #{pane_pid})
+set -uo pipefail
+pid="${1:-}"; [ -n "${pid:-}" ] || exit 0
+
+# Walk the pane's process tree for an AI agent.
+found=""; found_name=""
+queue="$pid"
+while [ -n "$queue" ]; do
+  p="${queue%% *}"
+  if [ "$queue" = "$p" ]; then queue=""; else queue="${queue#* }"; fi
+  for c in $(pgrep -P "$p" 2>/dev/null); do
+    comm=$(ps -o comm= -p "$c" 2>/dev/null); comm="${comm##*/}"
+    case "$comm" in
+      opencode*|claude*|codex*) found="$c"; found_name="$comm"; break 2;;
+    esac
+    queue="${queue:+$queue }$c"
+  done
+done
+[ -n "$found" ] || exit 0
+found_name="${found_name%%[0-9]*}"; found_name="${found_name%.exe}"; found_name="${found_name%.*}"
+
+# Working vs idle, from CPU time the agent accumulated since the last tick.
+now=$(date +%s)
+cput=$(ps -o time= -p "$found" 2>/dev/null | tr -d ' ')
+cpusec=$(printf '%s' "$cput" | awk -F: 'NF==3{print $1*3600+$2*60+int($3)} NF==2{print $1*60+int($2)} NF==1{print int($1)} END{if(NR==0)print 0}')
+statefile="${TMPDIR:-/tmp}/tmux-agent.${found}.state"
+state="working"
+if [ -f "$statefile" ]; then
+  read -r pcpu pnow < "$statefile" 2>/dev/null || true
+  if [ -n "${pcpu:-}" ] && [ -n "${pnow:-}" ]; then
+    dcpu=$((cpusec - pcpu)); dwall=$((now - pnow)); [ "$dwall" -lt 1 ] && dwall=1
+    [ $((dcpu * 100)) -lt $((dwall * 12)) ] && state="idle"
+  fi
+fi
+printf '%s %s\n' "$cpusec" "$now" > "$statefile"
+
+# Compact elapsed time: [D-]HH:MM:SS -> 3h31m / 12m / <1m
+e=$(ps -o etime= -p "$found" 2>/dev/null | tr -d ' ')
+el=""
+if [ -n "$e" ]; then
+  case "$e" in *-*) d="${e%%-*}"; e="${e#*-}";; *) d=0;; esac
+  IFS=: read -r a b c <<< "$e"
+  if [ -n "${c:-}" ]; then h=$((10#$a)); m=$((10#$b)); else h=0; m=$((10#$a)); fi
+  if   [ "$d" -gt 0 ]; then el="${d}d${h}h"
+  elif [ "$h" -gt 0 ]; then el="${h}h${m}m"
+  elif [ "$m" -gt 0 ]; then el="${m}m"
+  else el="<1m"; fi
+fi
+
+# Colour encodes the state.
+if [ "$state" = "idle" ]; then col="#e0af68"; else col="#bb9af7"; fi
+
+printf '#[fg=#292e42,bg=#1a1b26]#[fg=%s,bg=#292e42] %s %s #[fg=#292e42,bg=#1a1b26] ' \
+  "$col" "$found_name" "$el"

@@ -1,28 +1,54 @@
-#!/bin/bash
-res=$(osascript -e '
-tell application "Spotify"
-  if running then
-    try
-      if player state is playing then
-        return "♫ " & artist of current track & " - " & name of current track
-      end if
-    end try
-  end if
-end tell
-' 2>/dev/null)
-if [ -n "$res" ]; then
-  printf '#[fg=#bb9af7]%s ' "$res"
-  exit 0
+#!/usr/bin/env bash
+# .tmux-nowplaying — now-playing chip, tinted with the album's dominant color.
+# Supports Music.app and Spotify (if installed). Pair with .tmux-artwork-color.
+set -uo pipefail
+ARTDIR="${TMPDIR:-/tmp}/tmux-artwork"
+[ -d "$ARTDIR" ] || mkdir -p "$ARTDIR" 2>/dev/null
+
+info=""; au=""
+if pgrep -x Spotify >/dev/null 2>&1; then
+  info=$(osascript -e 'tell application "Spotify"
+    if player state is playing then return (artist of current track) & "\t" & (name of current track)
+  end tell' 2>/dev/null)
+  [ -n "$info" ] && au=$(osascript -e 'tell application "Spotify"
+    if player state is playing then return artwork url of current track
+  end tell' 2>/dev/null)
 fi
-res=$(osascript -e '
-tell application "Music"
-  if running then
-    try
-      if player state is playing then
-        return "♫ " & artist of current track & " - " & name of current track
-      end if
-    end try
-  end if
-end tell
-' 2>/dev/null)
-[ -n "$res" ] && printf '#[fg=#bb9af7]%s ' "$res"
+if [ -z "$info" ] && pgrep -x Music >/dev/null 2>&1; then
+  info=$(osascript -e 'tell application "Music"
+    if player state is playing then return (artist of current track) & "\t" & (name of current track)
+  end tell' 2>/dev/null)
+fi
+[ -n "$info" ] || exit 0
+
+artist="${info%%$'\t'*}"; name="${info#*$'\t'}"
+text="$artist - $name"
+[ "${#text}" -gt 40 ] && text="${text:0:39}…"
+
+# Resolve a chip color, cached per track so we only decode art on track change.
+key=$(printf '%s' "$text" | md5 -q 2>/dev/null || printf '%s' "$text" | md5sum | cut -c1-32)
+hexfile="$ARTDIR/$key.hex"; bg=""; fg=""
+if [ -f "$hexfile" ]; then
+  read -r bg fg < "$hexfile" 2>/dev/null || true
+else
+  raw="$ARTDIR/$key.raw"
+  if [ -n "$au" ]; then curl -fsSL "$au" -o "$raw" 2>/dev/null; else
+    osascript -e 'tell application "Music"
+      try
+        set d to data of artwork 1 of current track
+        return d
+      end try
+    end tell' > "$raw" 2>/dev/null
+  fi
+  if [ -s "$raw" ]; then
+    read -r bg fg < <(python3 "$HOME/.tmux-artwork-color" "$raw" 2>/dev/null)
+  fi
+  rm -f "$raw"
+  [ -n "${bg:-}" ] && printf '%s %s\n' "$bg" "$fg" > "$hexfile"
+fi
+
+if [ -n "${bg:-}" ] && [ -n "${fg:-}" ]; then
+  printf '#[fg=%s,bg=#1a1b26]#[fg=%s,bg=%s] ♫ %s #[fg=%s,bg=#1a1b26] ' "$bg" "$fg" "$bg" "$text" "$bg"
+else
+  printf '#[fg=#292e42,bg=#1a1b26]#[fg=#bb9af7,bg=#292e42] ♫ %s #[fg=#292e42,bg=#1a1b26] ' "$text"
+fi
